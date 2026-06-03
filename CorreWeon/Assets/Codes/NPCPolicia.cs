@@ -8,27 +8,56 @@ public class NPCPolicia : MonoBehaviour
     Vector3 direccion;
     public float timeStep;
 
+    public EstadoPolicia estadoActual = EstadoPolicia.Estatico;
     void Update()
+    {
+        switch (estadoActual)
+        {
+            case EstadoPolicia.Estatico:
+                EstadoEstatico();
+                break;
+
+            case EstadoPolicia.Alerta:
+                EstadoAlerta();
+                break;
+        }
+
+        ActualizarPrediccion();
+    }
+    void EstadoEstatico()
+    {
+        // Quieto
+    }
+    void EstadoAlerta()
     {
         GameObject[] objetosNegros = GameObject.FindGameObjectsWithTag("Negro");
 
         foreach (GameObject objetoNegro in objetosNegros)
         {
-            
-            float distancia = Vector3.Distance(transform.position, objetoNegro.transform.position);
+            float distancia = Vector3.Distance(
+                transform.position,
+                objetoNegro.transform.position);
 
-            
             if (distancia < radio)
             {
-                direccion = (objetoNegro.transform.position - transform.position).normalized;
+                direccion =
+                    (objetoNegro.transform.position -
+                    transform.position).normalized;
 
-                transform.position += direccion * velocidad * Time.deltaTime;
+                transform.position +=
+                    direccion * velocidad * Time.deltaTime;
             }
         }
-
+    }
+    void ActualizarPrediccion()
+    {
         for (int i = 0; i < prediccion.Length; i++)
         {
-           prediccion[i].transform.position = PredictPositionMRU(transform.position, direccion * timeStep, i);
+            prediccion[i].transform.position =
+                PredictPositionMRU(
+                    transform.position,
+                    direccion * timeStep,
+                    i);
         }
     }
     /// <returns>Nueva posición según el MRU</returns>

@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class SpawnerManager : MonoBehaviour
@@ -12,18 +12,26 @@ public class SpawnerManager : MonoBehaviour
 
     [Header("Configuración Policía")]
     public GameObject policiaPrefab;
-    public float tiempoSpawnPolicia = 30f;
+    public float tiempoSpawnPolicia = 15f;
+
+    public float radioSpawnPoliciaMin = 20f;
+    public float radioSpawnPoliciaMax = 35f;
 
     public Transform jugador;
+
     private List<GameObject> npcsActivos = new List<GameObject>();
+
+    private int siguienteSpawnPolicia;
 
     void Start()
     {
         GameObject objJugador = GameObject.FindGameObjectWithTag("Negro");
+
         if (objJugador != null)
         {
             jugador = objJugador.transform;
-            InvokeRepeating("GenerarPolicia", tiempoSpawnPolicia, tiempoSpawnPolicia);
+
+            siguienteSpawnPolicia = Mathf.RoundToInt(tiempoSpawnPolicia);
         }
         else
         {
@@ -33,7 +41,8 @@ public class SpawnerManager : MonoBehaviour
 
     void Update()
     {
-        if (jugador == null) return;
+        if (jugador == null)
+            return;
 
         npcsActivos.RemoveAll(item => item == null);
 
@@ -41,47 +50,100 @@ public class SpawnerManager : MonoBehaviour
         {
             GenerarNpc();
         }
+
+        if (Timer.elapsedTime >= siguienteSpawnPolicia)
+        {
+            GenerarPolicia();
+
+            siguienteSpawnPolicia += Mathf.RoundToInt(tiempoSpawnPolicia);
+        }
     }
 
     void GenerarNpc()
     {
         Vector3 posicion = ObtenerPosicionAleatoria();
-        GameObject nuevoNpc = Instantiate(npcPrefab, posicion, Quaternion.identity);
+
+        GameObject nuevoNpc =
+            Instantiate(npcPrefab, posicion, Quaternion.identity);
+
         npcsActivos.Add(nuevoNpc);
     }
 
     void GenerarPolicia()
     {
-        if (jugador == null) return;
-        Vector3 posicion = ObtenerPosicionAleatoria();
-        Instantiate(policiaPrefab, posicion, Quaternion.identity);
+        if (jugador == null)
+            return;
+
+        Vector3 posicion =
+            ObtenerPosicionAleatoriaPolicia();
+
+        Instantiate(
+            policiaPrefab,
+            posicion,
+            Quaternion.identity);
     }
 
     Vector3 ObtenerPosicionAleatoria()
     {
         Vector3 randomDirection = Random.insideUnitSphere;
-        randomDirection.y = 0; 
+
+        randomDirection.y = 0;
         randomDirection = randomDirection.normalized;
 
-        float dist = Random.Range(radioSpawnMin, radioSpawnMax);
+        float dist = Random.Range(
+            radioSpawnMin,
+            radioSpawnMax);
+
+        return jugador.position + (randomDirection * dist);
+    }
+
+    Vector3 ObtenerPosicionAleatoriaPolicia()
+    {
+        Vector3 randomDirection = Random.insideUnitSphere;
+
+        randomDirection.y = 0;
+        randomDirection = randomDirection.normalized;
+
+        float dist = Random.Range(
+            radioSpawnPoliciaMin,
+            radioSpawnPoliciaMax);
+
         return jugador.position + (randomDirection * dist);
     }
 
     void OnDrawGizmosSelected()
     {
         Transform tempJugador = jugador;
+
         if (tempJugador == null)
         {
             GameObject obj = GameObject.FindGameObjectWithTag("Negro");
-            if (obj != null) tempJugador = obj.transform;
+
+            if (obj != null)
+                tempJugador = obj.transform;
         }
 
         if (tempJugador != null)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(tempJugador.position, radioSpawnMin);
+            Gizmos.DrawWireSphere(
+                tempJugador.position,
+                radioSpawnMin);
+
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(tempJugador.position, radioSpawnMax);
+            Gizmos.DrawWireSphere(
+                tempJugador.position,
+                radioSpawnMax);
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(
+                tempJugador.position,
+                radioSpawnPoliciaMin);
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(
+                tempJugador.position,
+                radioSpawnPoliciaMax);
         }
     }
 }

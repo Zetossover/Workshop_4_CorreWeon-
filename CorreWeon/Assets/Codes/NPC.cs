@@ -7,9 +7,28 @@ public class NPC : MonoBehaviour
     public float velocidad = 2f;
     bool TieneDinero = true;
 
-    public float radioAlarma = 8f;
+    [Header("Alarmas")]
+    public float radioAlarmaNPC = 8f;
+    public float radioAlarmaPolicia = 15f;
+
     public EstadoNPC estadoActual = EstadoNPC.Estatico;
     public static event Action OnDineroRobado;
+
+    [Header("Miedo")]
+    public float radioPanico = 20f;
+    bool panicoActivado = false;
+
+    [Header("Llamada")]
+    public float tiempoLlamadaPolicia = 9f;
+    public GameObject policiaPrefab;
+    public Transform puntoLlamadaPolicia;
+
+    private bool llamadaIniciada = false;
+    float timerLlamada = 0f;
+    bool llamadaRealizada = false;
+
+    [Header("Enojo")]
+    public float velocidadEnojo = 4f;
 
     [Header("Probabilidades")]
 
@@ -81,22 +100,60 @@ public class NPC : MonoBehaviour
     {
         // No hace nada
     }
+
     void EstadoMiedo()
     {
-        Debug.Log("AHHH que miedo yo me voy");
-        Destroy(gameObject, 3f);
+        if (!panicoActivado)
+        {
+            panicoActivado = true;
+
+            ActivarPanico();
+
+            Debug.Log("AHHH que miedo yo me voy");
+
+            Destroy(gameObject, 3f);
+        }
     }
 
     void EstadoEnojo()
     {
-        Debug.Log("ven pa ca negro ql");
+        GameObject[] objetosNegros = GameObject.FindGameObjectsWithTag("Negro");
+
+        foreach (GameObject objetoNegro in objetosNegros)
+        {
+            float distancia = Vector3.Distance(transform.position, objetoNegro.transform.position);
+
+            if (distancia < radio)
+            {
+                Vector3 direccion = (objetoNegro.transform.position - transform.position).normalized;
+
+                transform.position += direccion * velocidadEnojo * Time.deltaTime;
+            }
+        }
+
         Destroy(gameObject, 10f);
     }
 
     void EstadoLlamada()
     {
-        Debug.Log("alo honorables fuerzas de la ley?");
-        Destroy(gameObject, 5f);
+        if (llamadaRealizada)
+            return;
+
+        timerLlamada += Time.deltaTime;
+
+        if (timerLlamada >= tiempoLlamadaPolicia)
+        {
+            llamadaRealizada = true;
+
+            for (int i = 0; i < 3; i++)
+            {
+                Instantiate(policiaPrefab, puntoLlamadaPolicia.position, Quaternion.identity);
+            }
+
+            Debug.Log("Alo Honorables fuerzas de la ley?");
+
+            Destroy(gameObject);
+        }
     }
 
     void EstadoDecepcion()
@@ -104,7 +161,47 @@ public class NPC : MonoBehaviour
         Debug.Log("bueno la vida sigue");
         Destroy(gameObject, 2f);
     }
+
     void ActivarAlarma()
+    {
+        // ALERTAR NPCs
+        NPC[] npcs = FindObjectsByType<NPC>(FindObjectsSortMode.None);
+
+        foreach (NPC npc in npcs)
+        {
+            if (npc == this)
+                continue;
+
+            float distancia = Vector3.Distance(transform.position, npc.transform.position);
+
+            if (distancia <= radioAlarmaNPC)
+            {
+                npc.estadoActual = EstadoNPC.Alerta;
+
+                Debug.Log(npc.name + " recibió alerta de NPC");
+            }
+        }
+
+        // ALERTAR POLICÍAS
+        NPCPolicia[] policias =
+            FindObjectsByType<NPCPolicia>(FindObjectsSortMode.None);
+
+        foreach (NPCPolicia policia in policias)
+        {
+            float distancia = Vector3.Distance(
+                transform.position,
+                policia.transform.position);
+
+            if (distancia <= radioAlarmaPolicia)
+            {
+                policia.estadoActual = EstadoPolicia.Alerta;
+
+                Debug.Log(policia.name + " recibió alerta policial");
+            }
+        }
+    }
+
+    void ActivarPanico()
     {
         NPC[] npcs = FindObjectsByType<NPC>(FindObjectsSortMode.None);
 
@@ -113,26 +210,30 @@ public class NPC : MonoBehaviour
             if (npc == this)
                 continue;
 
-            float distancia = Vector3.Distance(
-                transform.position,
-                npc.transform.position
-            );
+            float distancia = Vector3.Distance(transform.position, npc.transform.position);
 
-            if (distancia <= radioAlarma)
+            if (distancia <= radioPanico)
             {
-                Debug.Log(npc.gameObject.name + " pasó a ALERTA");
                 npc.estadoActual = EstadoNPC.Alerta;
-                Debug.Log("Distancia a " + npc.name + ": " + distancia);
+            }
+        }
+
+        NPCPolicia[] policias = FindObjectsByType<NPCPolicia>(FindObjectsSortMode.None);
+
+        foreach (NPCPolicia policia in policias)
+        {
+            float distancia = Vector3.Distance(transform.position, policia.transform.position);
+
+            if (distancia <= radioPanico)
+            {
+                policia.estadoActual = EstadoPolicia.Alerta;
             }
         }
     }
+
     void ElegirReaccion()
     {
-        int total =
-            probMiedo +
-            probEnojo +
-            probLlamada +
-            probDecepcion;
+        int total = probMiedo + probEnojo + probLlamada + probDecepcion;
 
         int random = UnityEngine.Random.Range(0, total);
 
@@ -153,6 +254,7 @@ public class NPC : MonoBehaviour
             estadoActual = EstadoNPC.Decepcion;
         }
     }
+
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Negro"))
@@ -165,5 +267,14 @@ public class NPC : MonoBehaviour
 
             ElegirReaccion();
         }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, radioAlarmaNPC);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, radioAlarmaPolicia);
     }
 }

@@ -758,7 +758,9 @@ MonoBehaviour:
   radioSpawnMin: 5
   radioSpawnMax: 15
   policiaPrefab: {fileID: 6572973969498729366, guid: f9e5de658a8a9de43a183467a52a11bf, type: 3}
-  tiempoSpawnPolicia: 60
+  tiempoSpawnPolicia: 15
+  radioSpawnPoliciaMin: 20
+  radioSpawnPoliciaMax: 35
   jugador: {fileID: 1281659361}
 --- !u!4 &402495642
 Transform:
@@ -1172,6 +1174,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &821962390 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 683791830237620962, guid: d83934e658875014d896b8b98284b0df, type: 3}
+  m_PrefabInstance: {fileID: 9156124433214910262}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2835,6 +2842,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6037342168423287900, guid: d83934e658875014d896b8b98284b0df, type: 3}
+      propertyPath: policiaPrefab
+      value: 
+      objectReference: {fileID: 6572973969498729366, guid: f9e5de658a8a9de43a183467a52a11bf, type: 3}
+    - target: {fileID: 6037342168423287900, guid: d83934e658875014d896b8b98284b0df, type: 3}
+      propertyPath: puntoLlamadaPolicia
+      value: 
+      objectReference: {fileID: 821962390}
     - target: {fileID: 8871657894285361783, guid: d83934e658875014d896b8b98284b0df, type: 3}
       propertyPath: m_Name
       value: NPC_Civil
