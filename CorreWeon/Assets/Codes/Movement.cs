@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 public class Movement : MonoBehaviour
 {
@@ -8,9 +9,10 @@ public class Movement : MonoBehaviour
     public Transform myTransform;
     public Material materialNegro;
 
+
     void Update()
     {
-        a = Input.GetAxis("Horizontal"); 
+        a = Input.GetAxis("Horizontal");
         w = Input.GetAxis("Vertical");
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -22,6 +24,7 @@ public class Movement : MonoBehaviour
         {
             Move();
         }
+
     }
 
     private void Move()
