@@ -8,9 +8,16 @@ public class Timer : MonoBehaviour
     [SerializeField] TextMeshProUGUI timerText;
 
     public static float elapsedTime;
+    public static void ResetTimer()
+    {
+        elapsedTime = 0f;
+    }
 
     void Update()
     {
+        if (GameState.juegoPausado)
+            return;
+
         elapsedTime += Time.deltaTime;
 
         int minutes = Mathf.FloorToInt(elapsedTime / 60);

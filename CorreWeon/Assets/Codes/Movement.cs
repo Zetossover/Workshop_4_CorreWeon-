@@ -9,7 +9,8 @@ public class Movement : MonoBehaviour
     public Transform myTransform;
     public Material materialNegro;
 
-
+    public bool puedeMoverse = true;
+    public bool capturado = false;
     void Update()
     {
         a = Input.GetAxis("Horizontal");
@@ -20,7 +21,7 @@ public class Movement : MonoBehaviour
             CambiarTagYColor();
         }
 
-        if (a != 0 || w != 0)
+        if (puedeMoverse && (a != 0 || w != 0))
         {
             Move();
         }
@@ -45,6 +46,18 @@ public class Movement : MonoBehaviour
             Debug.LogWarning("No Tiene el Material");
         }
     }
+    private void SerCapturado()
+    {
+        puedeMoverse = false;
+        capturado = true;
+
+        gameObject.tag = "Capturado";
+
+        GameState.juegoPausado = true;
+        GameState.jugadorCapturado = true;
+
+        Debug.Log("El jugador ha sido capturado");
+    }
     private void OnCollisionEnter(Collision other)
     {
         if(other.gameObject.CompareTag("Blanco"))
@@ -53,7 +66,7 @@ public class Movement : MonoBehaviour
         }
         if (other.gameObject.CompareTag("Policia"))
         {
-            Destroy(gameObject);
+            SerCapturado();
         }
     }
 }

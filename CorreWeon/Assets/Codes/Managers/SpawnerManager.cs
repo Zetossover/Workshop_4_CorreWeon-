@@ -41,6 +41,9 @@ public class SpawnerManager : MonoBehaviour
 
     void Update()
     {
+        if (GameState.juegoPausado)
+            return;
+
         if (jugador == null)
             return;
 
@@ -63,8 +66,17 @@ public class SpawnerManager : MonoBehaviour
     {
         Vector3 posicion = ObtenerPosicionAleatoria();
 
-        GameObject nuevoNpc =
-            Instantiate(npcPrefab, posicion, Quaternion.identity);
+        GameObject nuevoNpc = Instantiate(npcPrefab, posicion, Quaternion.identity);
+
+        if (DifficultyManager.dificultadActual == NivelDificultad.Dificil)
+        {
+            NPC npc = nuevoNpc.GetComponent<NPC>();
+
+            if (npc != null && npc.estadoActual == EstadoNPC.Estatico)
+            {
+                npc.estadoActual = EstadoNPC.Alerta;
+            }
+        }
 
         npcsActivos.Add(nuevoNpc);
     }
@@ -77,10 +89,17 @@ public class SpawnerManager : MonoBehaviour
         Vector3 posicion =
             ObtenerPosicionAleatoriaPolicia();
 
-        Instantiate(
-            policiaPrefab,
-            posicion,
-            Quaternion.identity);
+        GameObject nuevaPolicia = Instantiate(policiaPrefab, posicion, Quaternion.identity);
+
+        if (DifficultyManager.dificultadActual == NivelDificultad.Dificil)
+        {
+            NPCPolicia policia = nuevaPolicia.GetComponent<NPCPolicia>();
+
+            if (policia != null)
+            {
+                policia.estadoActual = EstadoPolicia.Alerta;
+            }
+        }
     }
 
     Vector3 ObtenerPosicionAleatoria()

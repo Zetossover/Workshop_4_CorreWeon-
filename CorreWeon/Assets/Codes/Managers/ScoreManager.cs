@@ -4,7 +4,8 @@ using TMPro;
 public class ScoreManager : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
-    private int score = 0;
+
+    public static int score = 0;
 
     void OnEnable()
     {
@@ -16,9 +17,14 @@ public class ScoreManager : MonoBehaviour
         NPC.OnDineroRobado -= SumarPunto;
     }
 
+    void Start()
+    {
+        scoreText.text = "Puntaje: " + score;
+    }
+
     void SumarPunto()
     {
         score++;
-        scoreText.text = "Puntaje: " + score.ToString();
+        scoreText.text = "Puntaje: " + score;
     }
 }

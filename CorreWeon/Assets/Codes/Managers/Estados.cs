@@ -13,3 +13,10 @@ public enum EstadoPolicia
     Estatico,
     Alerta
 }
+
+public enum NivelDificultad
+{
+    Novato,
+    Normal,
+    Dificil
+}

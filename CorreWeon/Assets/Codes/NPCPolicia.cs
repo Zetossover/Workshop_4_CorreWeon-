@@ -11,6 +11,11 @@ public class NPCPolicia : MonoBehaviour
     public EstadoPolicia estadoActual = EstadoPolicia.Estatico;
     void Update()
     {
+        if (DifficultyManager.dificultadActual == NivelDificultad.Dificil)
+        {
+            estadoActual = EstadoPolicia.Alerta;
+        }
+
         switch (estadoActual)
         {
             case EstadoPolicia.Estatico:

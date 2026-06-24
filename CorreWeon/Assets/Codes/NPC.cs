@@ -1,11 +1,14 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class NPC : MonoBehaviour
 {
     public float radio = 3f; 
     public float velocidad = 2f;
     bool TieneDinero = true;
+    bool reaccionActivada = false;
+    bool puntoEntregado = false;
 
     [Header("Alarmas")]
     public float radioAlarmaNPC = 8f;
@@ -45,6 +48,16 @@ public class NPC : MonoBehaviour
     public int probDecepcion = 15;
     void Update()
     {
+        if (GameState.juegoPausado)
+            return;
+        if (DifficultyManager.dificultadActual == NivelDificultad.Dificil)
+        {
+            if (estadoActual == EstadoNPC.Estatico)
+            {
+                estadoActual = EstadoNPC.Alerta;
+            }
+        }
+
         switch (estadoActual)
         {
             case EstadoNPC.Estatico:
@@ -254,18 +267,58 @@ public class NPC : MonoBehaviour
             estadoActual = EstadoNPC.Decepcion;
         }
     }
+    IEnumerator CambiarEstadoConRetraso()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        ElegirReaccion();
+    }
 
     private void OnCollisionEnter(Collision other)
     {
+        if (!TieneDinero)
+            return;
+
         if (other.gameObject.CompareTag("Negro"))
         {
             TieneDinero = false;
+
+            reaccionActivada = true;
 
             ActivarAlarma();
 
             OnDineroRobado?.Invoke();
 
-            ElegirReaccion();
+            StartCoroutine(CambiarEstadoConRetraso());
+        }
+    }
+    private void OnCollisionStay(Collision other)
+    {
+        if (estadoActual == EstadoNPC.Enojo &&
+            other.gameObject.CompareTag("Negro"))
+        {
+            Movement movimientoJugador =
+                other.gameObject.GetComponent<Movement>();
+
+            if (movimientoJugador != null)
+            {
+                movimientoJugador.puedeMoverse = false;
+            }
+        }
+    }
+    private void OnCollisionExit(Collision other)
+    {
+        if (estadoActual == EstadoNPC.Enojo &&
+            other.gameObject.CompareTag("Negro"))
+        {
+            Movement movimientoJugador =
+                other.gameObject.GetComponent<Movement>();
+
+            if (movimientoJugador != null &&
+                !movimientoJugador.capturado)
+            {
+                movimientoJugador.puedeMoverse = true;
+            }
         }
     }
 
