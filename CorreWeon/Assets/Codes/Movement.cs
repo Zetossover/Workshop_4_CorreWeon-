@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
+using Terresquall;
 
 public class Movement : MonoBehaviour
 {
@@ -13,8 +14,9 @@ public class Movement : MonoBehaviour
     public bool capturado = false;
     void Update()
     {
-        a = Input.GetAxis("Horizontal");
-        w = Input.GetAxis("Vertical");
+        a = VirtualJoystick.GetAxis("Horizontal");
+
+        w = VirtualJoystick.GetAxis("Vertical");
 
         if (Input.GetKeyDown(KeyCode.R))
         {
