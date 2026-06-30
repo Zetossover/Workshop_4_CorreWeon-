@@ -46,6 +46,14 @@ public class NPC : MonoBehaviour
 
     [Range(0, 100)]
     public int probDecepcion = 15;
+
+    [Header("Feedback Visual")]
+    public Transform puntoFeedback;
+
+    public GameObject imagenMiedoPrefab;
+    public GameObject imagenEnojoPrefab;
+    public GameObject imagenLlamadaPrefab;
+    public GameObject imagenDecepcionPrefab;
     void Update()
     {
         if (GameState.juegoPausado)
@@ -84,6 +92,19 @@ public class NPC : MonoBehaviour
                 EstadoDecepcion();
                 break;
         }
+    }
+    void MostrarFeedback(GameObject prefab)
+    {
+        if (prefab == null || puntoFeedback == null)
+            return;
+
+        GameObject imagen = Instantiate(
+            prefab,
+            puntoFeedback.position,
+            Quaternion.identity,
+            puntoFeedback);
+
+        Destroy(imagen, 5f);
     }
     void EstadoAlerta()
     {
@@ -253,18 +274,26 @@ public class NPC : MonoBehaviour
         if (random < probMiedo)
         {
             estadoActual = EstadoNPC.Miedo;
+
+            MostrarFeedback(imagenMiedoPrefab);
         }
         else if (random < probMiedo + probEnojo)
         {
             estadoActual = EstadoNPC.Enojo;
+
+            MostrarFeedback(imagenEnojoPrefab);
         }
         else if (random < probMiedo + probEnojo + probLlamada)
         {
             estadoActual = EstadoNPC.Llamada;
+
+            MostrarFeedback(imagenLlamadaPrefab);
         }
         else
         {
             estadoActual = EstadoNPC.Decepcion;
+
+            MostrarFeedback(imagenDecepcionPrefab);
         }
     }
     IEnumerator CambiarEstadoConRetraso()
