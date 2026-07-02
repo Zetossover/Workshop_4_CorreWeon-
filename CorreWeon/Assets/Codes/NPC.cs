@@ -7,8 +7,6 @@ public class NPC : MonoBehaviour
     public float radio = 3f; 
     public float velocidad = 2f;
     bool TieneDinero = true;
-    bool reaccionActivada = false;
-    bool puntoEntregado = false;
 
     [Header("Alarmas")]
     public float radioAlarmaNPC = 8f;
@@ -26,7 +24,6 @@ public class NPC : MonoBehaviour
     public GameObject policiaPrefab;
     public Transform puntoLlamadaPolicia;
 
-    private bool llamadaIniciada = false;
     float timerLlamada = 0f;
     bool llamadaRealizada = false;
 
@@ -311,8 +308,6 @@ public class NPC : MonoBehaviour
         if (other.gameObject.CompareTag("Negro"))
         {
             TieneDinero = false;
-
-            reaccionActivada = true;
 
             ActivarAlarma();
 

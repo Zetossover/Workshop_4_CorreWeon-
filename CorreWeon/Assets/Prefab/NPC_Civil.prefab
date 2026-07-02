@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 4442108402558197869}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.843, y: 0.804, z: 0}
+  m_LocalPosition: {x: 1.5, y: 1.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radio: 8
-  velocidad: 8
+  velocidad: 6
   radioAlarmaNPC: 8
   radioAlarmaPolicia: 15
   estadoActual: 0
@@ -231,8 +231,8 @@ MonoBehaviour:
   probEnojo: 25
   probLlamada: 20
   probDecepcion: 15
-  puntoFeedback: {fileID: 0}
-  imagenMiedoPrefab: {fileID: 0}
-  imagenEnojoPrefab: {fileID: 0}
-  imagenLlamadaPrefab: {fileID: 0}
-  imagenDecepcionPrefab: {fileID: 0}
+  puntoFeedback: {fileID: 2680653012592429420}
+  imagenMiedoPrefab: {fileID: 6401450407757731001, guid: 68feb07043f623f4bbf02032840dc321, type: 3}
+  imagenEnojoPrefab: {fileID: 4528479121421509476, guid: be8ed5552a8150447aa72198fecf5335, type: 3}
+  imagenLlamadaPrefab: {fileID: 100590328427913009, guid: 92e74ecb28f12e44c940afa901708b96, type: 3}
+  imagenDecepcionPrefab: {fileID: 4665617837822481451, guid: afb5c8dd41257c44381079e36122b87e, type: 3}
